@@ -6,7 +6,7 @@ function init (json) {
   SurveyAnalyticsTabulator.Table.showFilesAsImages = true;
 
   function getPaginatedData({ offset, limit, filter, sort }) {
-    const endpointUrl = "/api/pagedresults";
+    const endpointUrl = "/api/paginatedresults";
     const params = { offset, limit, filter, sort, postId: surveyId };
     const url = new URL(window.location.origin + endpointUrl);
     url.search = new URLSearchParams(params).toString();

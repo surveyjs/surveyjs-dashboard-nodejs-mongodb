@@ -92,7 +92,7 @@ app.get(apiBaseAddress + "/results", (req, res) => {
   });
 });
 
-app.get(apiBaseAddress + "/pagedresults", (req, res) => {
+app.get(apiBaseAddress + "/paginatedresults", (req, res) => {
   const storage = getStorage(req);
   const postId = req.query["postId"];
   const offset = req.query["offset"] || 0;
@@ -100,7 +100,7 @@ app.get(apiBaseAddress + "/pagedresults", (req, res) => {
   const filter = req.query["filter"] || [];
   const sort = req.query["sort"] || [];
   console.log(filter);
-  storage.getPagedResults(postId, offset, limit, filter, sort, (result) => {
+  storage.getPaginatedResults(postId, offset, limit, filter, sort, (result) => {
     sendJsonResult(res, result);
   });
 });
