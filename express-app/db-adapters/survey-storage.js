@@ -42,7 +42,7 @@ function SurveyStorage (dbQueryAdapter) {
       dbQueryAdapter.retrieve("results", [{ name: "postid", op: "=", value: postId }], (results) => { callback({ id: postId, data: results.map(r => r.json)}); });
     },
     getPaginatedResults: (postId, offset, limit, filter, sort, callback) => {
-      dbQueryAdapter.getObjectsExt("results",  [{ name: "postid", op: "=", value: postId }].concat(filter), sort, offset, limit, (results) => {
+      dbQueryAdapter.retrievePaginated("results",  [{ name: "postid", op: "=", value: postId }].concat(filter), sort, offset, limit, (results) => {
         callback({ data: results.data.map(r => r.json), totalCount: results.totalCount });
       });
     },

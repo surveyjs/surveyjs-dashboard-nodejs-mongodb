@@ -16,7 +16,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
     );
   }
 
-  function getObjectsExt (collectionName, filter, order, offset, limit, callback) {
+  function getObjectsPaginated (collectionName, filter, order, offset, limit, callback) {
     filter = filter || [];
     let query = {};
     filter.forEach(fi => query[fi.name] = fi.value);
@@ -83,7 +83,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
     retrieve: getObjects,
     update: updateObject,
     delete: deleteObject,
-    getObjectsExt: getObjectsExt
+    retrievePaginated: getObjectsPaginated
   }
 }
 
