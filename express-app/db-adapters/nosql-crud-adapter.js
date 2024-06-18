@@ -1,5 +1,5 @@
-function NoSQLCRUDAdapter(dbConnectFunction, getId) {
-  function getObjects(collectionName, filter, callback) {
+function NoSqlCrudAdapter (dbConnectFunction, getId) {
+  function getObjects (collectionName, filter, callback) {
     filter = filter || [];
     let query = {};
     filter.forEach(fi => query[fi.name] = fi.value);
@@ -16,19 +16,15 @@ function NoSQLCRUDAdapter(dbConnectFunction, getId) {
     );
   }
 
-  function getObjectsExt(collectionName, filter, order, offset, limit, callback) {
+  function getObjectsExt (collectionName, filter, order, offset, limit, callback) {
     filter = filter || [];
     let query = {};
     filter.forEach(fi => query[fi.name] = fi.value);
-    // console.log(offset + " " + limit);
-    // console.log(JSON.stringify(query));
-    // console.log(JSON.stringify(order));
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).count(query).then(count => {
         db.collection(collectionName).find(query).skip(parseInt(offset)).limit(parseInt(limit)).toArray()
         .then((results) => {
           const result = { data: results, totalCount: count };
-          // console.log(JSON.stringify(result));
           callback(result);
           finalizeCallback(result);
         })
@@ -39,7 +35,7 @@ function NoSQLCRUDAdapter(dbConnectFunction, getId) {
     });
   }
 
-  function deleteObject(collectionName, idValue, callback) {
+  function deleteObject (collectionName, idValue, callback) {
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).deleteMany({ id: idValue })
         .then((results) => {
@@ -53,7 +49,7 @@ function NoSQLCRUDAdapter(dbConnectFunction, getId) {
     );
   }
 
-  function createObject(collectionName, object, callback) {
+  function createObject (collectionName, object, callback) {
     object.id = object.id || getId();
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).insertOne(object)
@@ -68,7 +64,7 @@ function NoSQLCRUDAdapter(dbConnectFunction, getId) {
     );
   }
 
-  function updateObject(collectionName, object, callback) {
+  function updateObject (collectionName, object, callback) {
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).updateOne({ id: object.id }, { $set: object })
         .then((results) => {
@@ -91,4 +87,4 @@ function NoSQLCRUDAdapter(dbConnectFunction, getId) {
   }
 }
 
-module.exports = NoSQLCRUDAdapter;
+module.exports = NoSqlCrudAdapter;
