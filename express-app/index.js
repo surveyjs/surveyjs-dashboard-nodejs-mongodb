@@ -1,124 +1,117 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var session = require("express-session");
-var MongoSurveyStorage = require("./db-adapters/mongo");
-// var PostgresSurveyStorage = require("./db-adapters/postgres");
-// var InMemorySurveyStorage = require("./db-adapters/in-memory");
-var apiBaseAddress = "/api";
+const express = require("express");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const MongoSurveyStorage = require("./db-adapters/mongo");
+const apiBaseAddress = "/api";
 
-var app = express();
+const app = express();
 app.use(
   session({
     secret: "mysecret",
     resave: true,
     saveUninitialized: true,
-    //cookie: { secure: true }
+    // cookie: { secure: true }
   })
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-function getStorage(req) {
-  var storage = new MongoSurveyStorage(req.session);
+function getStorage (req) {
+  const storage = new MongoSurveyStorage(req.session);
   return storage;
 }
 
-function sendJsonResult(res, obj) {
+function sendJsonResult (res, obj) {
   res.setHeader("Content-Type", "application/json");
   res.send(JSON.stringify(obj));
 }
 
-app.get(apiBaseAddress + "/getActive", function (req, res) {
-  var storage = getStorage(req);
-  storage.getSurveys(function (result) {
+app.get(apiBaseAddress + "/getActive", (req, res) => {
+  const storage = getStorage(req);
+  storage.getSurveys((result) => {
     sendJsonResult(res, result);
   });
 });
 
-app.get(apiBaseAddress + "/getSurvey", function (req, res) {
-  var storage = getStorage(req);
-  var surveyId = req.query["surveyId"];
-  storage.getSurvey(surveyId, function (result) {
+app.get(apiBaseAddress + "/getSurvey", (req, res) => {
+  const storage = getStorage(req);
+  const surveyId = req.query["surveyId"];
+  storage.getSurvey(surveyId, (result) => {
     sendJsonResult(res, result);
   });
 });
 
-app.get(apiBaseAddress + "/changeName", function (req, res) {
-  var storage = getStorage(req);
-  var id = req.query["id"];
-  var name = req.query["name"];
-  storage.changeName(id, name, function (result) {
+app.get(apiBaseAddress + "/changeName", (req, res) => {
+  const storage = getStorage(req);
+  const id = req.query["id"];
+  const name = req.query["name"];
+  storage.changeName(id, name, (result) => {
     sendJsonResult(res, result);
   });
 });
 
-app.get(apiBaseAddress + "/create", function (req, res) {
-  var storage = getStorage(req);
-  var name = req.query["name"];
-  storage.addSurvey(name, function (survey) {
+app.get(apiBaseAddress + "/create", (req, res) => {
+  const storage = getStorage(req);
+  const name = req.query["name"];
+  storage.addSurvey(name, (survey) => {
     sendJsonResult(res, survey);
   });
 });
 
-app.post(apiBaseAddress + "/changeJson", function (req, res) {
-  var storage = getStorage(req);
-  var id = req.body.id;
-  var json = req.body.json;
-  storage.storeSurvey(id, null, json, function (survey) {
+app.post(apiBaseAddress + "/changeJson", (req, res) => {
+  const storage = getStorage(req);
+  const id = req.body.id;
+  const json = req.body.json;
+  storage.storeSurvey(id, null, json, (survey) => {
     sendJsonResult(res, survey);
   });
 });
 
-app.post(apiBaseAddress + "/post", function (req, res) {
-  var storage = getStorage(req);
-  var postId = req.body.postId;
-  var surveyResult = req.body.surveyResult;
-  storage.postResults(postId, surveyResult, function (result) {
+app.post(apiBaseAddress + "/post", (req, res) => {
+  const storage = getStorage(req);
+  const postId = req.body.postId;
+  const surveyResult = req.body.surveyResult;
+  storage.postResults(postId, surveyResult, (result) => {
     sendJsonResult(res, result.json);
   });
 });
 
-app.get(apiBaseAddress + "/delete", function (req, res) {
-  var storage = getStorage(req);
-  var id = req.query["id"];
-  storage.deleteSurvey(id, function (result) {
+app.get(apiBaseAddress + "/delete", (req, res) => {
+  const storage = getStorage(req);
+  const id = req.query["id"];
+  storage.deleteSurvey(id, () => {
     sendJsonResult(res, { id: id });
   });
 });
 
-app.get(apiBaseAddress + "/results", function (req, res) {
-  var storage = getStorage(req);
-  var postId = req.query["postId"];
-  storage.getResults(postId, function (result) {
+app.get(apiBaseAddress + "/results", (req, res) => {
+  const storage = getStorage(req);
+  const postId = req.query["postId"];
+  storage.getResults(postId, (result) => {
     sendJsonResult(res, result);
   });
 });
 
-app.get(apiBaseAddress + "/pagedresults", function (req, res) {
-  var storage = getStorage(req);
-  var postId = req.query["postId"];
-  var offset = req.query["offset"] || 0;
-  var limit = req.query["limit"];
-  var filter = req.query["filter"] || [];
-  if(filter == "undefined") {
-    filter = [];
-  }
-  var sort = req.query["sort"] || [];
-  if(sort == "undefined") {
-    sort = [];
-  }
-  storage.getPagedResults(postId, offset, limit, filter, sort, function (result) {
+app.get(apiBaseAddress + "/paginatedresults", (req, res) => {
+  const storage = getStorage(req);
+  const postId = req.query["postId"];
+  const offset = req.query["offset"] || 0;
+  const limit = req.query["limit"];
+  const filter = req.query["filter"] || [];
+  const sort = req.query["sort"] || [];
+  console.log(filter);
+  storage.getPaginatedResults(postId, offset, limit, filter, sort, (result) => {
     sendJsonResult(res, result);
   });
 });
 
-app.get(["/", "/about", "/run/*", "/edit/*", "/results/*"], function (req, res, next) {
+app.get(["/", "/about", "/run/*", "/edit/*", "/results/*"], (_, res) => {
   res.sendFile("index.html", { root: __dirname + "/../public" });
 });
 
 app.use(express.static(__dirname + "/../public"));
 
-var port = process.env.PORT || 3000;
-app.listen(port, function () {
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
   console.log("Listening on port: " + port + "...");
 });

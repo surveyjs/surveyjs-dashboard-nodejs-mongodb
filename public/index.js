@@ -1,12 +1,12 @@
 const surveyId = "1";
 
-function init(json) {
-  var survey = new Survey.SurveyModel(json);
+function init (json) {
+  const survey = new Survey.SurveyModel(json);
 
   SurveyAnalyticsTabulator.Table.showFilesAsImages = true;
 
-  function getPaginatedData({ offset, limit, filter, sort}) {
-    const endpointUrl = "/api/pagedresults";
+  function getPaginatedData({ offset, limit, filter, sort }) {
+    const endpointUrl = "/api/paginatedresults";
     const params = { offset, limit, filter, sort, postId: surveyId };
     const url = new URL(window.location.origin + endpointUrl);
     url.search = new URLSearchParams(params).toString();
@@ -17,31 +17,12 @@ function init(json) {
     });
   }
 
-  // var normalizedData = data.map(function (item) {
-  //   survey.getAllQuestions().forEach(function (q) {
-  //     if (!item[q.name]) {
-  //       item[q.name] = "";
-  //     }
-  //   });
-  //   return item;
-  // });
-
-  // function getPaginatedData({ offset, limit, filter, sort }) {
-  //   console.log(JSON.stringify(filter));
-  //   console.log(JSON.stringify(sort));
-  //   return new Promise((resolve, reject) => {
-  //     setTimeout(() => {
-  //       resolve({ data: normalizedData.slice(offset, offset + limit), totalCount: normalizedData.length });
-  //     }, 1000);
-  //   });
-  // }
-
-  var surveyAnalyticsTabulator = new SurveyAnalyticsTabulator.Tabulator(
+  const tabulator = new SurveyAnalyticsTabulator.Tabulator(
     survey,
     getPaginatedData
   );
 
-  surveyAnalyticsTabulator.render("tabulatorContainer");
+  tabulator.render("tabulatorContainer");
 }
 
 fetch("/api/getSurvey?surveyId=" + surveyId).then(res => res.json()).then(survey => init(survey.json));
