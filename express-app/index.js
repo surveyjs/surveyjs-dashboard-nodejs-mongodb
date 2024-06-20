@@ -99,9 +99,6 @@ app.get(apiBaseAddress + "/paginatedresults", (req, res) => {
   const limit = req.query["limit"];
   const filter = req.query["filter"] && req.query["filter"] !== "undefined" ? JSON.parse(req.query["filter"]) : [];
   const sort = req.query["sort"] && req.query["sort"] !== "undefined" ? JSON.parse(req.query["sort"]) : [];
-  // console.log("/paginatedresults:");
-  // console.log("filter: ", JSON.stringify(filter));
-  // console.log("order: ", JSON.stringify(sort));
   storage.getPaginatedResults(postId, offset, limit, filter, sort, (result) => {
     sendJsonResult(res, result);
   });

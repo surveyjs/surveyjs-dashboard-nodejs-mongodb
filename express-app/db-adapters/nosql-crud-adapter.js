@@ -22,9 +22,6 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
     filter.forEach(fi => {
       if(!!fi.value) {
         let val = fi.value;
-        // if(parseInt(fi.value) != NaN) {
-        //   val = parseInt(fi.value);
-        // }
         query[fi.field] = val;
       }
     });
