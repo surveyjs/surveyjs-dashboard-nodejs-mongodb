@@ -6,8 +6,10 @@ function init (json) {
   SurveyAnalyticsTabulator.Table.showFilesAsImages = true;
 
   function getPaginatedData({ offset, limit, filter, sort }) {
+    // console.log("filter: %o", filter);
+    // console.log("order: %o", sort);
     const endpointUrl = "/api/paginatedresults";
-    const params = { offset, limit, filter, sort, postId: surveyId };
+    const params = { offset, limit, filter: JSON.stringify(filter), sort: JSON.stringify(sort), postId: surveyId };
     const url = new URL(window.location.origin + endpointUrl);
     url.search = new URLSearchParams(params).toString();
     return new Promise((resolve, reject) => {

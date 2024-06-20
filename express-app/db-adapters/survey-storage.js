@@ -26,7 +26,7 @@ function SurveyStorage (dbQueryAdapter) {
   return {
     addSurvey: addSurvey,
     getSurvey: (surveyId, callback) => {
-      dbQueryAdapter.retrieve("surveys", [{ name: "id", op: "=", value: surveyId }], (results) => { callback(results[0]); });
+      dbQueryAdapter.retrieve("surveys", [{ field: "id", op: "=", value: surveyId }], (results) => { callback(results[0]); });
     },
     storeSurvey: (id, _, json, callback) => {
       dbQueryAdapter.update("surveys", { id: id, json: json }, (results) => { callback(results); });
@@ -39,10 +39,13 @@ function SurveyStorage (dbQueryAdapter) {
     },
     postResults: postResults,
     getResults: (postId, callback) => {
-      dbQueryAdapter.retrieve("results", [{ name: "postid", op: "=", value: postId }], (results) => { callback({ id: postId, data: results.map(r => r.json)}); });
+      dbQueryAdapter.retrieve("results", [{ field: "postid", op: "=", value: postId }], (results) => { callback({ id: postId, data: results.map(r => r.json)}); });
     },
     getPaginatedResults: (postId, offset, limit, filter, sort, callback) => {
-      dbQueryAdapter.retrievePaginated("results",  [{ name: "postid", op: "=", value: postId }].concat(filter), sort, offset, limit, (results) => {
+      // console.log("getPaginatedResults:");
+      // console.log("filter: ", JSON.stringify(filter));
+      // console.log("order: ", JSON.stringify(sort));
+      dbQueryAdapter.retrievePaginated("results",  [{ field: "postid", op: "=", value: postId }].concat(filter.map(fi => ({ field: "json." + fi.field, op: fi.op, value: fi.value }))), sort.map(fi => ({ field: "json." + fi.field, dir: fi.dir })), offset, limit, (results) => {
         callback({ data: results.data.map(r => r.json), totalCount: results.totalCount });
       });
     },

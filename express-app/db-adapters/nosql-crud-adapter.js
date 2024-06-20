@@ -2,7 +2,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
   function getObjects (collectionName, filter, callback) {
     filter = filter || [];
     let query = {};
-    filter.forEach(fi => query[fi.name] = fi.value);
+    filter.forEach(fi => query[fi.field] = fi.value);
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).find(query).toArray()
         .then((results) => {
@@ -19,10 +19,27 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
   function getObjectsPaginated (collectionName, filter, order, offset, limit, callback) {
     filter = filter || [];
     let query = {};
-    filter.forEach(fi => query[fi.name] = fi.value);
+    filter.forEach(fi => {
+      if(!!fi.value) {
+        let val = fi.value;
+        // if(parseInt(fi.value) != NaN) {
+        //   val = parseInt(fi.value);
+        // }
+        query[fi.field] = val;
+      }
+    });
+    let sort = {};
+    order.forEach(fi => {
+      sort[fi.field] = fi.value == "desc" ? -1 : 1;
+    });
+    console.log("getObjectsPaginated:");
+    console.log("filter: ", JSON.stringify(filter));
+    console.log("order: ", JSON.stringify(order));
+    console.log("query: ", JSON.stringify(query));
+    console.log("sort: ", JSON.stringify(sort));
     dbConnectFunction((db, finalizeCallback) => {
       db.collection(collectionName).count(query).then(count => {
-        db.collection(collectionName).find(query).skip(parseInt(offset)).limit(parseInt(limit)).toArray()
+        db.collection(collectionName).find(query).sort(sort).skip(parseInt(offset)).limit(parseInt(limit)).toArray()
         .then((results) => {
           const result = { data: results, totalCount: count };
           callback(result);
