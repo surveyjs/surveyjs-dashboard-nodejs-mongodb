@@ -19,7 +19,8 @@ function init (json) {
 
   const tabulator = new SurveyAnalyticsTabulator.Tabulator(
     survey,
-    getPaginatedData
+    getPaginatedData,
+    { jspdf: window.jsPDF, xlsx: window.XLSX }
   );
 
   tabulator.render("tabulatorContainer");
