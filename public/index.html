@@ -1,25 +1,46 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>SurveyJS Dashboard: Table View</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <script src="https://unpkg.com/survey-core/survey.core.min.js"></script>
-  <script src="https://unpkg.com/survey-core/survey.i18n.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/6.3.0/js/tabulator.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
-  <script src="https://unpkg.com/survey-analytics/survey.analytics.tabulator.min.js"></script>
-  <script src="https://unpkg.com/survey-analytics/survey.analytics.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/6.3.0/css/tabulator.min.css" />
-  <link rel="stylesheet" href="https://unpkg.com/survey-analytics/survey.analytics.tabulator.css" />
+  <title>SurveyJS Dashboard: Remote Data</title>
+  <link rel="stylesheet" href="./surveyjs-theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div id="tabulatorContainer"></div>
-  <script src="./index.js"></script>
+  <header class="header">
+    <div class="header-title">SurveyJS Dashboard: Remote Data Example</div>
+    <div class="header-desc">Server-side survey results data processing to show in survey-analytics library. <br/>Click a button below to navigate to the table or charts demo.</div>
+  </header>
+  <nav class="nav">
+    <a class="nav-link" href="./tabulator.html">Table View</a>
+    <a class="nav-link" href="./summary.html">Summary View</a>
+  </nav>
+  <main class="main-content">
+    <h2 class="api-title">API Endpoints</h2>
+    <section class="api-section">
+      <h3 class="api-endpoint">/api/paginatedresults</h3>
+      <p class="api-desc">Returns paginated survey results for a given survey. Used in Table View.</p>
+      <ul class="api-list">
+        <li><b>Query params:</b> <code>postId</code> (survey id), <code>offset</code>, <code>limit</code>, <code>filter</code>, <code>sort</code></li>
+        <li>Builds a MongoDB query and sort order from <code>filter</code> and <code>sort</code>.</li>
+        <li>Returns <code>{ data: [...], totalCount: N }</code> for the requested page.</li>
+      </ul>
+    </section>
+    <section class="api-section">
+      <h3 class="api-endpoint">/api/questionsummary</h3>
+      <p class="api-desc">Returns an aggregated summary for a specific survey question. Used in Summary View.</p>
+      <ul class="api-list">
+        <li><b>Query params:</b> <code>surveyId</code>, <code>questionId</code>, <code>questionType</code>, <code>visualizerType</code>, <code>filter</code></li>
+        <li>Selects an aggregation pipeline based on question/visualizer type (e.g., single/multiple choice, number, histogram).</li>
+        <li>Returns a summary (counts, averages, histogram, etc.) for the question.</li>
+      </ul>
+    </section>
+  </main>
+  <footer class="footer">
+    &copy; 2025 Devsoft Baltic OÜ. All rights reserved.
+  </footer>
 </body>
-
 </html>

@@ -9,13 +9,14 @@ WORKDIR /code
 ARG PORT=3000
 ENV PORT $PORT
 EXPOSE $PORT
+EXPOSE 9229
 
 COPY ./package.json /code/package.json
 # RUN npm i
 COPY ../package-lock.json /code/package-lock.json
 RUN npm ci
 
-CMD [ "node", "express-app/index.js" ]
+CMD [ "node", "--inspect=0.0.0.0:9229", "express-app/index.js" ]
 
 FROM development as dev-envs
 RUN <<EOF

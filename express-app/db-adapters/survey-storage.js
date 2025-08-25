@@ -46,6 +46,11 @@ function SurveyStorage (dbQueryAdapter) {
         callback({ data: results.data.map(r => r.json), totalCount: results.totalCount });
       });
     },
+    getQuestionSummary: (surveyId, questionId, questionType, visualizerType, filter, callback) => {
+      dbQueryAdapter.retrieveSummary("results", surveyId, questionId, questionType, visualizerType, [].concat(filter.map(fi => ({ field: "json." + fi.field, op: fi.op, value: fi.value }))), (results) => {
+        callback({ data: results });
+      });
+    },
     changeName: (id, name, callback) => {
       dbQueryAdapter.update("surveys", { id: id, name: name }, (results) => { callback(results); });
     }

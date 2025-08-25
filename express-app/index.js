@@ -104,6 +104,18 @@ app.get(apiBaseAddress + "/paginatedresults", (req, res) => {
   });
 });
 
+app.get(apiBaseAddress + "/questionsummary", (req, res) => {
+  const storage = getStorage(req);
+  const surveyId = req.query["surveyId"];
+  const questionId = req.query["questionId"];
+  const questionType = req.query["questionType"];
+  const visualizerType = req.query["visualizerType"];
+  const filter = req.query["filter"] && req.query["filter"] !== "undefined" ? JSON.parse(req.query["filter"]) : [];
+  storage.getQuestionSummary(surveyId, questionId, questionType, visualizerType, filter, (result) => {
+    sendJsonResult(res, result);
+  });
+});
+
 app.get(["/", "/about", "/run/*", "/edit/*", "/results/*"], (_, res) => {
   res.sendFile("index.html", { root: __dirname + "/../public" });
 });

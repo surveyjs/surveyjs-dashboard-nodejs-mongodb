@@ -1,4 +1,3 @@
-version: '3'
 services:
   express-app:
     build:
@@ -14,6 +13,7 @@ services:
       - NODE_ENV=development
     ports:
       - 9080:3000
+      - 9229:9229
     secrets:
       - db-password
     volumes:
