@@ -1,33 +1,37 @@
 const surveyId = "1";
 
 function getSummaryData({ visualizer, filter }) {
-  console.log("Question: " + JSON.stringify(visualizer.name));
-  console.log("Filter: " + JSON.stringify(filter));
   const endpointUrl = "/api/questionsummary";
-  const params = { surveyId: surveyId, questionId: visualizer.name, questionType: visualizer.question.getType(), visualizerType: visualizer.type, filter: JSON.stringify(filter) };
+  const params = {
+    surveyId: surveyId,
+    questionId: visualizer.name,
+    questionType: visualizer.question.getType(),
+    visualizerType: visualizer.type,
+    filter: JSON.stringify(filter)
+  };
   const url = new URL(window.location.origin + endpointUrl);
   url.search = new URLSearchParams(params).toString();
   return new Promise((resolve, reject) => {
     fetch(url)
-      .then(response => response.json().then(result => {
-        console.log("params: " + JSON.stringify(params));
-        console.log("result: " + JSON.stringify(result));
-        resolve(result.data);
-      }))
+      .then(response => response.json().then(result => resolve(result.data)))
       .catch(() => reject());
   });
 }
 
-function init (json) {
-  var survey = new Survey.SurveyModel(json);
-  var visPanel = new SurveyAnalytics.VisualizationPanel(
-    [ survey.getQuestionByName("satisfaction"), survey.getQuestionByName("recommend friends"), survey.getQuestionByName("price to competitors"), survey.getQuestionByName("price") ],
-    // survey.getAllQuestions(),
+function init(json) {
+  const survey = new Survey.SurveyModel(json);
+  const questionsToVisualize = [
+    survey.getQuestionByName("satisfaction"),
+    survey.getQuestionByName("recommend friends"),
+    survey.getQuestionByName("price to competitors"),
+    survey.getQuestionByName("price")
+  ];
+  const vizPanel = new SurveyAnalytics.VisualizationPanel(
+    questionsToVisualize, // survey.getAllQuestions()
     getSummaryData,
     {}
   );
-  visPanel.showToolbar = true;
-  visPanel.render(document.getElementById("summaryContainer"));
+  vizPanel.render(document.getElementById("summaryContainer"));
 }
 
 fetch("/api/getSurvey?surveyId=" + surveyId).then(res => res.json()).then(survey => init(survey.json));
