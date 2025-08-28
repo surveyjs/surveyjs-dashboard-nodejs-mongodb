@@ -1,20 +1,24 @@
 function choiceTransformationPipeline(result) {
   let res = {};
+  let totalCount = 0;
   result.forEach(item => {
     res[item._id] = item.count;
+    totalCount += item.count;
   });
-  return res;
+  return { data: res, totalCount: totalCount };
 }
 function numberTransformationPipeline(result) {
   if (result.length == 0) return { value: 0, minValue: 0, maxValue: 0 };
-  return { value: result[0].average, minValue: result[0].min, maxValue: result[0].max };
+  return { data: { value: result[0].average, minValue: result[0].min, maxValue: result[0].max } };
 }
 function histogramTransformationPipeline(result) {
   let res = [];
+  let totalCount = 0;
   result.forEach(item => {
     res.push(item.count);
+    totalCount += item.count;
   });
-  return res; 
+  return { data: res, intervals: result, totalCount: totalCount };
 }
 const transformers = {
   "boolean": choiceTransformationPipeline,
@@ -118,35 +122,37 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
       }
     ];
     var histogramPipeline = [
-      { $match: { postid: surveyId } },
-      { $project: { value: "$json." + questionId } },
-      { $match: { value: { $exists: true } } },
-      {
+        { $match: { postid: surveyId } },
+        { $project: { value: "$json." + questionId } },
+        { $match: { value: { $exists: true } } },
+        {
         $bucketAuto: {
-          groupBy: "$value",
-          buckets: 3,
-          output: {
-            count: { $sum: 1 },
-            minValue: { $min: "$value" },
-            maxValue: { $max: "$value" }
-          }
+            groupBy: "$value",
+            buckets: 10,
+            output: {
+                count: { $sum: 1 },
+                minValue: { $min: "$value" },
+                maxValue: { $max: "$value" }
+            }
         }
-      },
-      {
+        },
+        {
         $project: {
-          _id: 0,
-          interval: {
-            $concat: [
-              { $toString: { $round: ["$minValue", 2] } },
-              " - ",
-              { $toString: { $round: ["$maxValue", 2] } }
-            ]
-          },
-          count: 1
+            _id: 0,
+            start: "$minValue",
+            end: "$maxValue",
+            label: {
+                $concat: [
+                    { $toString: { $round: ["$minValue", 2] } },
+                    " - ",
+                    { $toString: { $round: ["$maxValue", 2] } }
+                ]
+            },
+            count: 1
         }
-      }
+        }
     ];
-    const mongoPiplines = {
+      const mongoPiplines = {
       "boolean": singleChoicePipline,
       "radiogroup": singleChoicePipline,
       "dropdown": singleChoicePipline,
