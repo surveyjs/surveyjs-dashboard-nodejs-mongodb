@@ -83,7 +83,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
   }
 
   function retrieveSummary (collectionName, surveyId, questionId, questionType, visualizerType, filter, callback) {
-    var singleChoicePipline = [
+    const singleChoicePipeline = [
       { $match: { postid: surveyId } },
       { $project: { value: "$json." + questionId } },
       { $match: { value: { $exists: true } } },
@@ -94,7 +94,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
         }
       }
     ];
-    var multipleChoicePipline = [
+    const multipleChoicePipeline = [
       { $match: { postid: surveyId } },
       { $project: { value: "$json." + questionId } },
       { $match: { value: { $exists: true } } },
@@ -106,7 +106,7 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
         }
       }
     ];
-    var numberPipline = [
+    const numberPipeline = [
       { $match: { postid: surveyId } },
       { $project: { value: "$json." + questionId } },
       { $match: { value: { $exists: true } } },
@@ -121,11 +121,11 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
         }
       }
     ];
-    var histogramPipeline = [
-        { $match: { postid: surveyId } },
-        { $project: { value: "$json." + questionId } },
-        { $match: { value: { $exists: true } } },
-        {
+    const histogramPipeline = [
+      { $match: { postid: surveyId } },
+      { $project: { value: "$json." + questionId } },
+      { $match: { value: { $exists: true } } },
+      {
         $bucketAuto: {
             groupBy: "$value",
             buckets: 10,
@@ -152,18 +152,18 @@ function NoSqlCrudAdapter (dbConnectFunction, getId) {
         }
         }
     ];
-      const mongoPiplines = {
-      "boolean": singleChoicePipline,
-      "radiogroup": singleChoicePipline,
-      "dropdown": singleChoicePipline,
-      "checkbox": multipleChoicePipline,
-      "tagbox": multipleChoicePipline,
-      "number": numberPipline,
-      "rating": numberPipline,
+    const mongoPipelines = {
+      "boolean": singleChoicePipeline,
+      "radiogroup": singleChoicePipeline,
+      "dropdown": singleChoicePipeline,
+      "checkbox": multipleChoicePipeline,
+      "tagbox": multipleChoicePipeline,
+      "number": numberPipeline,
+      "rating": numberPipeline,
       "histogram": histogramPipeline
     }
     dbConnectFunction((db, finalizeCallback) => {
-      const pipeline = mongoPiplines[visualizerType] || mongoPiplines[questionType] || [];
+      const pipeline = mongoPipelines[visualizerType] || mongoPipelines[questionType] || [];
       db.collection(collectionName).aggregate(pipeline).toArray()
         .then((results) => {
           const transformer = transformers[visualizerType] || transformers[questionType] || (r => r);

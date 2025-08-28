@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SurveyJS Dashboard: Remote Data</title>
+  <title>SurveyJS Dashboard: Remote Data Example</title>
   <link rel="stylesheet" href="./surveyjs-theme.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,30 +12,30 @@
 <body>
   <header class="header">
     <div class="header-title">SurveyJS Dashboard: Remote Data Example</div>
-    <div class="header-desc">Server-side survey results data processing to show in survey-analytics library. <br/>Click a button below to navigate to the table or charts demo.</div>
+    <div class="header-desc">Demonstrates server-side processing of survey results for visualization in the SurveyJS Dashboard.<br>Click a button below to view the table view or charts demo.</div>
   </header>
   <nav class="nav">
-    <a class="nav-link" href="./tabulator.html">Table View</a>
-    <a class="nav-link" href="./summary.html">Summary View</a>
+    <a class="nav-link" href="./tabulator.html">Table View Demo</a>
+    <a class="nav-link" href="./summary.html">Charts Demo</a>
   </nav>
   <main class="main-content">
     <h2 class="api-title">API Endpoints</h2>
     <section class="api-section">
       <h3 class="api-endpoint">/api/paginatedresults</h3>
-      <p class="api-desc">Returns paginated survey results for a given survey. Used in Table View.</p>
+      <p class="api-desc">Returns a paginated list of survey results for a given survey. Used in the table view demo.</p>
       <ul class="api-list">
-        <li><b>Query params:</b> <code>postId</code> (survey id), <code>offset</code>, <code>limit</code>, <code>filter</code>, <code>sort</code></li>
-        <li>Builds a MongoDB query and sort order from <code>filter</code> and <code>sort</code>.</li>
-        <li>Returns <code>{ data: [...], totalCount: N }</code> for the requested page.</li>
+        <li><b>Query parameters:</b> <code>postId</code> (survey ID), <code>offset</code>, <code>limit</code>, <code>filter</code>, <code>sort</code></li>
+        <li>Builds a MongoDB query based on the passed parameters.</li>
+        <li>Returns <code>{ data: [...], totalCount: N }</code> for the requested data page.</li>
       </ul>
     </section>
     <section class="api-section">
       <h3 class="api-endpoint">/api/questionsummary</h3>
-      <p class="api-desc">Returns an aggregated summary for a specific survey question. Used in Summary View.</p>
+      <p class="api-desc">Returns an aggregated summary for a specific survey question. Used in the charts demo.</p>
       <ul class="api-list">
-        <li><b>Query params:</b> <code>surveyId</code>, <code>questionId</code>, <code>questionType</code>, <code>visualizerType</code>, <code>filter</code></li>
-        <li>Selects an aggregation pipeline based on question/visualizer type (e.g., single/multiple choice, number, histogram).</li>
-        <li>Returns a summary (counts, averages, histogram, etc.) for the question.</li>
+        <li><b>Query parameters:</b> <code>surveyId</code>, <code>questionId</code>, <code>questionType</code>, <code>visualizerType</code>, <code>filter</code></li>
+        <li>Selects an aggregation pipeline based on the question or visualizer type (e.g., single choice, multiple choice, numeric, histogram).</li>
+        <li>Returns a summary including counts, averages, histograms, and other statistics for the question.</li>
       </ul>
     </section>
   </main>

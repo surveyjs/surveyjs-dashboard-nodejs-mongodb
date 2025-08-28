@@ -1,13 +1,16 @@
 const surveyId = "1";
 
-function init (json) {
-  const survey = new Survey.SurveyModel(json);
+SurveyAnalyticsTabulator.Table.showFilesAsImages = true;
 
-  SurveyAnalyticsTabulator.Table.showFilesAsImages = true;
-
-  function getPaginatedData({ offset, limit, filter, sort }) {
+function getPaginatedData({ offset, limit, filter, sort }) {
     const endpointUrl = "/api/paginatedresults";
-    const params = { offset, limit, filter: JSON.stringify(filter), sort: JSON.stringify(sort), postId: surveyId };
+    const params = {
+      offset,
+      limit,
+      filter: JSON.stringify(filter),
+      sort: JSON.stringify(sort),
+      postId: surveyId
+    };
     const url = new URL(window.location.origin + endpointUrl);
     url.search = new URLSearchParams(params).toString();
     return new Promise((resolve, reject) => {
@@ -17,12 +20,13 @@ function init (json) {
     });
   }
 
+function init(json) {
+  const survey = new Survey.SurveyModel(json);
   const tabulator = new SurveyAnalyticsTabulator.Tabulator(
     survey,
     getPaginatedData,
     { jspdf: window.jsPDF, xlsx: window.XLSX }
   );
-
   tabulator.render("tabulatorContainer");
 }
 
